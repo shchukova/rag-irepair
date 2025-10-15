@@ -1,251 +1,600 @@
-# RAG iRepair
+# iFixit RAG Chatbot
 
-A Retrieval-Augmented Generation (RAG) application designed to provide intelligent assistance for repair-related queries using advanced AI technology.
+A production-ready RAG (Retrieval-Augmented Generation) chatbot system that provides intelligent repair guidance using iFixit's comprehensive repair database.
 
-## Overview
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](https://www.docker.com/)
 
-RAG iRepair combines the power of retrieval systems with large language models to deliver accurate, context-aware responses for repair documentation, troubleshooting guides, and technical support. The system retrieves relevant information from a knowledge base and uses it to generate helpful, precise answers to user queries.
+## 🚀 Overview
 
-## Features
+This intelligent chatbot combines the power of modern AI with iFixit's extensive repair knowledge base to provide accurate, context-aware repair assistance. Built with:
 
-- **Intelligent Query Processing**: Understands natural language questions about repairs and maintenance
-- **Context-Aware Responses**: Leverages RAG architecture to provide accurate answers based on stored documentation
-- **Semantic Search**: Finds relevant repair guides and documentation using vector embeddings
-- **Real-time Information Retrieval**: Quickly accesses and synthesizes information from large knowledge bases
-- **Scalable Architecture**: Built to handle growing documentation and user queries efficiently
+- **Llama 2** - Advanced language model for natural conversation
+- **LlamaIndex** - RAG orchestration and vector store management
+- **iFixit API** - Access to thousands of repair guides
+- **FastAPI** - High-performance REST API
+- **Ollama** - Local LLM deployment
+- **Docker** - Containerized deployment
 
-## Architecture
+## ✨ Features
 
-The application follows a standard RAG pipeline:
+- ✅ **Real-time Repair Guidance** - Instant access to iFixit's repair database
+- ✅ **Conversational AI** - Natural dialogue with context memory
+- ✅ **Multi-device Support** - Works with various device types
+- ✅ **Session Management** - Maintains conversation history
+- ✅ **REST API** - Easy integration with existing systems
+- ✅ **Source Attribution** - Transparent references to repair guides
+- ✅ **Docker Ready** - Containerized for easy deployment
+- ✅ **Scalable Architecture** - Production-grade design
 
-1. **Document Ingestion**: Repair manuals, guides, and documentation are processed and stored
-2. **Embedding Generation**: Text is converted to vector embeddings for semantic search
-3. **Vector Storage**: Embeddings are stored in a vector database for efficient retrieval
-4. **Query Processing**: User questions are embedded and matched against stored knowledge
-5. **Response Generation**: Retrieved context is used to generate accurate, helpful responses
+## 🏗️ Architecture
 
-## Prerequisites
+```
+┌─────────────┐
+│   User      │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────┐
+│   FastAPI Server    │
+│   (Port 8000)       │
+└──────┬──────────────┘
+       │
+       ├─────────────────┐
+       ▼                 ▼
+┌─────────────┐   ┌──────────────┐
+│  Ollama     │   │  iFixit API  │
+│  (Llama 2)  │   │              │
+└─────────────┘   └──────────────┘
+       │
+       ▼
+┌─────────────────┐
+│  LlamaIndex RAG │
+│  Vector Store   │
+└─────────────────┘
+```
 
-- Python 3.8+
-- pip or conda for package management
-- API keys for LLM provider (OpenAI, Anthropic, etc.)
-- Vector database (Chroma, FAISS, Pinecone, or similar)
+## 📦 Installation
 
-## Installation
+### Prerequisites
+
+- Python 3.9+
+- Docker & Docker Compose (optional, for containerized deployment)
+- 8GB+ RAM recommended
+- GPU recommended (NVIDIA with CUDA support for optimal performance)
+
+### Option 1: Local Installation
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/shchukova/rag-irepair.git
 cd rag-irepair
 
-# Create a virtual environment
+# 2. Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Install Ollama
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# 5. Pull Llama 2 model
+ollama pull llama2
+
+# 6. (Optional) Set your iFixit API key
+export IFIXIT_API_KEY="your_key_here"
 ```
 
-## Configuration
+### Option 2: Docker Installation (Recommended)
 
-Create a `.env` file in the project root with the following variables:
+```bash
+# 1. Clone the repository
+git clone https://github.com/shchukova/rag-irepair.git
+cd rag-irepair
 
-```env
-# LLM Provider Configuration
-OPENAI_API_KEY=your_api_key_here
-# or
-ANTHROPIC_API_KEY=your_api_key_here
+# 2. Create .env file with your API key
+echo "IFIXIT_API_KEY=your_key_here" > .env
 
-# Vector Database Configuration
-VECTOR_DB_PATH=./data/vector_store
-COLLECTION_NAME=repair_docs
+# 3. Build and run with Docker Compose
+docker-compose up -d
 
-# Application Settings
-EMBEDDING_MODEL=text-embedding-ada-002
-LLM_MODEL=gpt-4
-CHUNK_SIZE=1000
-CHUNK_OVERLAP=200
+# 4. Check logs
+docker-compose logs -f chatbot_api
 ```
 
-## Usage
+## 🎯 Quick Start
 
-### Basic Usage
+### Using Python Script
 
 ```python
-from rag_irepair import RepairAssistant
+from ifixit_chatbot import IFixitRAGChatbot
 
-# Initialize the assistant
-assistant = RepairAssistant()
+# Initialize chatbot
+chatbot = IFixitRAGChatbot(model_name="llama2")
+
+# Build knowledge base for a specific device
+chatbot.build_knowledge_base("iPhone 13", max_guides=10)
 
 # Ask a question
-response = assistant.query("How do I replace the screen on an iPhone 12?")
+response = chatbot.query("How do I replace the screen?")
 print(response)
+
+# Start interactive chat session
+chatbot.chat()
 ```
 
-### Command Line Interface
+### Using REST API
 
+**1. Start the API server:**
 ```bash
-# Start the interactive assistant
-python main.py
-
-# Query from command line
-python main.py --query "What tools do I need for laptop repair?"
+uvicorn api_server:app --host 0.0.0.0 --port 8000
 ```
 
-### Web Interface
-
+**2. Initialize chatbot for a device:**
 ```bash
-# Start the web server
-python app.py
-
-# Access at http://localhost:5000
+curl -X POST "http://localhost:8000/initialize" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "device_name": "iPhone 13",
+    "max_guides": 10
+  }'
 ```
 
-## Project Structure
-
-```
-rag-irepair/
-├── data/
-│   ├── documents/          # Raw repair documentation
-│   └── vector_store/       # Vector database storage
-├── src/
-│   ├── __init__.py
-│   ├── document_processor.py  # Document loading and chunking
-│   ├── embeddings.py          # Embedding generation
-│   ├── retriever.py           # Vector search and retrieval
-│   ├── generator.py           # Response generation
-│   └── assistant.py           # Main RAG pipeline
-├── tests/
-│   └── test_assistant.py
-├── app.py                  # Web application
-├── main.py                 # CLI interface
-├── requirements.txt
-├── .env.example
-└── README.md
-```
-
-## Adding New Documentation
-
-To add new repair guides to the knowledge base:
-
-```python
-from src.document_processor import DocumentProcessor
-
-processor = DocumentProcessor()
-processor.add_documents("path/to/repair/guides")
-processor.build_index()
-```
-
-Supported document formats:
-- PDF
-- Markdown
-- Plain text
-- HTML
-- DOCX
-
-## API Reference
-
-### RepairAssistant
-
-```python
-class RepairAssistant:
-    def __init__(self, config: dict = None)
-    def query(self, question: str, top_k: int = 5) -> str
-    def add_documents(self, documents: list)
-    def rebuild_index(self)
-```
-
-### DocumentProcessor
-
-```python
-class DocumentProcessor:
-    def load_documents(self, path: str) -> list
-    def chunk_documents(self, documents: list) -> list
-    def build_index(self)
-```
-
-## Performance Optimization
-
-- **Caching**: Frequently accessed documents are cached for faster retrieval
-- **Batch Processing**: Documents can be processed in batches for efficiency
-- **Async Operations**: Support for asynchronous query processing
-- **Index Optimization**: Regular index maintenance for optimal search performance
-
-## Testing
-
+**3. Query the chatbot:**
 ```bash
-# Run all tests
-pytest
-
-# Run specific test suite
-pytest tests/test_assistant.py
-
-# Run with coverage
-pytest --cov=src tests/
+curl -X POST "http://localhost:8000/query" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "How do I replace the battery?"
+  }'
 ```
 
-## Troubleshooting
+**4. Start a conversational session:**
+```bash
+curl -X POST "http://localhost:8000/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What tools do I need?",
+    "session_id": "user_123"
+  }'
+```
 
-### Common Issues
+## 📚 API Documentation
 
-**Issue**: Slow query responses
-- **Solution**: Check vector database size, consider increasing batch size or using GPU acceleration
+### Health Check
 
-**Issue**: Irrelevant responses
-- **Solution**: Adjust chunk size, increase top_k retrieval, or refine document quality
+**Check API status:**
+```http
+GET /health
+GET /healthz  # Kubernetes/Docker health check
+```
 
-**Issue**: Out of memory errors
-- **Solution**: Reduce chunk size, use smaller embedding models, or implement streaming
+### Initialization
 
-## Contributing
+**Initialize chatbot with device-specific knowledge:**
+```http
+POST /initialize
 
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Roadmap
-
-- [ ] Multi-language support
-- [ ] Image-based repair guide search
-- [ ] Real-time chat interface
-- [ ] Mobile application
-- [ ] Integration with repair service platforms
-- [ ] Advanced analytics and usage tracking
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Built with [LangChain](https://github.com/langchain-ai/langchain)
-- Vector storage powered by [ChromaDB](https://github.com/chroma-core/chroma) or similar
-- LLM capabilities from OpenAI/Anthropic
-- Inspired by the RAG community and repair documentation standards
-
-## Contact
-
-For questions or support, please:
-- Open an issue on GitHub
-- Contact the maintainer: [shchukova](https://github.com/shchukova)
-
-## Citation
-
-If you use this project in your research or work, please cite:
-
-```bibtex
-@software{rag_irepair,
-  author = {Shchukova},
-  title = {RAG iRepair: AI-Powered Repair Assistant},
-  year = {2025},
-  url = {https://github.com/shchukova/rag-irepair}
+Request Body:
+{
+  "device_name": "iPhone 13",
+  "max_guides": 10,
+  "model_name": "llama2"  // optional
 }
 ```
 
----
+### Query (Stateless)
 
-**Note**: This is an active project. Features and documentation are subject to change. Please check the repository for the latest updates.
+**Ask a single question without maintaining context:**
+```http
+POST /query
+
+Request Body:
+{
+  "question": "How do I replace the screen?",
+  "session_id": "optional"
+}
+```
+
+### Chat (Stateful)
+
+**Engage in conversation with context memory:**
+```http
+POST /chat
+
+Request Body:
+{
+  "message": "What tools do I need?",
+  "session_id": "user_123"
+}
+```
+
+### Session Management
+
+**Get conversation history:**
+```http
+GET /sessions/{session_id}
+```
+
+**Delete session:**
+```http
+DELETE /sessions/{session_id}
+```
+
+### Reset
+
+**Reset chatbot state:**
+```http
+POST /reset
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+# iFixit API Configuration
+IFIXIT_API_KEY=your_api_key_here
+
+# Ollama Configuration
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_HOST=0.0.0.0:11434
+
+# Application Settings
+PYTHONUNBUFFERED=1
+```
+
+### Model Configuration
+
+Choose the right model based on your needs:
+
+```python
+# Faster inference, lower accuracy (7B parameters)
+chatbot = IFixitRAGChatbot(model_name="llama2:7b")
+
+# Balanced performance (13B parameters) - Default
+chatbot = IFixitRAGChatbot(model_name="llama2:13b")
+
+# Best accuracy, slower inference (70B parameters)
+chatbot = IFixitRAGChatbot(model_name="llama2:70b")
+```
+
+### RAG Parameters
+
+Customize retrieval and chunking behavior:
+
+```python
+from llama_index.core import Settings
+from llama_index.core.node_parser import SentenceSplitter
+
+# Configure document chunking
+Settings.node_parser = SentenceSplitter(
+    chunk_size=512,      # Size of each text chunk
+    chunk_overlap=50     # Overlap between consecutive chunks
+)
+
+# Configure query engine
+query_engine = index.as_query_engine(
+    similarity_top_k=5,              # Number of relevant chunks to retrieve
+    response_mode="tree_summarize"   # How to synthesize response
+)
+```
+
+## 🐳 Docker Deployment
+
+### Single Container
+
+```bash
+# Build the Docker image
+docker build -t ifixit-chatbot .
+
+# Run the container
+docker run -d \
+  --name ifixit-chatbot \
+  -p 8000:8000 \
+  -e IFIXIT_API_KEY=your_key \
+  ifixit-chatbot
+```
+
+### Docker Compose (Recommended)
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Restart specific service
+docker-compose restart chatbot_api
+```
+
+## ☁️ Cloud Deployment
+
+### AWS EC2
+
+```bash
+# 1. Launch EC2 instance (t3.large or better recommended)
+
+# 2. SSH into your instance
+ssh -i your-key.pem ubuntu@your-instance-ip
+
+# 3. Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# 4. Clone repository and deploy
+git clone https://github.com/shchukova/rag-irepair.git
+cd rag-irepair
+docker-compose up -d
+```
+
+### Google Cloud Run
+
+```bash
+# 1. Build and push image to Container Registry
+gcloud builds submit --tag gcr.io/PROJECT_ID/ifixit-chatbot
+
+# 2. Deploy to Cloud Run
+gcloud run deploy ifixit-chatbot \
+  --image gcr.io/PROJECT_ID/ifixit-chatbot \
+  --platform managed \
+  --region us-central1 \
+  --memory 8Gi \
+  --cpu 4 \
+  --set-env-vars IFIXIT_API_KEY=your_key
+```
+
+### Azure Container Instances
+
+```bash
+# 1. Create resource group
+az group create --name ifixit-rg --location eastus
+
+# 2. Deploy container
+az container create \
+  --resource-group ifixit-rg \
+  --name ifixit-chatbot \
+  --image your-registry/ifixit-chatbot \
+  --cpu 4 --memory 8 \
+  --ports 8000 \
+  --environment-variables IFIXIT_API_KEY=your_key
+```
+
+## 🧪 Testing
+
+```bash
+# Run unit tests
+python -m pytest tests/
+
+# Run integration tests
+python test_chatbot.py
+
+# Run performance tests
+python -m pytest tests/test_performance.py
+
+# Test all API endpoints
+python testing_suite.py
+```
+
+## 📊 Performance Optimization
+
+### 1. Model Selection
+
+Balance speed vs accuracy based on your use case:
+
+| Model | Parameters | Speed | Accuracy | Use Case |
+|-------|-----------|-------|----------|----------|
+| llama2:7b | 7B | Fast | Good | High-traffic applications |
+| llama2:13b | 13B | Medium | Better | Balanced production use |
+| llama2:70b | 70B | Slow | Best | Maximum accuracy needed |
+
+### 2. Chunk Size Optimization
+
+```python
+# Smaller chunks = faster retrieval, less context
+Settings.node_parser = SentenceSplitter(chunk_size=256)
+
+# Larger chunks = more context, slower retrieval
+Settings.node_parser = SentenceSplitter(chunk_size=1024)
+
+# Recommended balanced setting
+Settings.node_parser = SentenceSplitter(chunk_size=512, chunk_overlap=50)
+```
+
+### 3. Response Caching
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=100)
+def cached_query(question: str):
+    return chatbot.query(question)
+```
+
+### 4. GPU Acceleration
+
+```bash
+# Enable GPU support in Docker Compose
+docker-compose --profile gpu up -d
+
+# Verify GPU is being used
+docker exec chatbot_api nvidia-smi
+```
+
+## 🔒 Security Best Practices
+
+1. **API Key Management**
+   - Store API keys in environment variables or secret managers
+   - Never commit keys to version control
+   - Use `.env` files (listed in `.gitignore`)
+
+2. **Rate Limiting**
+   ```python
+   from slowapi import Limiter
+   limiter = Limiter(key_func=get_remote_address)
+   
+   @app.post("/query")
+   @limiter.limit("10/minute")
+   async def query_endpoint():
+       pass
+   ```
+
+3. **Input Validation**
+   - Sanitize all user inputs
+   - Implement request size limits
+   - Validate data types and formats
+
+4. **HTTPS**
+   - Always use SSL/TLS in production
+   - Configure reverse proxy (nginx, Caddy)
+   - Use Let's Encrypt for free certificates
+
+5. **CORS Configuration**
+   ```python
+   from fastapi.middleware.cors import CORSMiddleware
+   
+   app.add_middleware(
+       CORSMiddleware,
+       allow_origins=["https://yourdomain.com"],
+       allow_methods=["POST", "GET"],
+       allow_headers=["*"],
+   )
+   ```
+
+## 📈 Monitoring & Logging
+
+### Logging Configuration
+
+```python
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('chatbot.log'),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
+```
+
+### Metrics Collection
+
+```python
+from prometheus_client import Counter, Histogram
+
+# Track query counts
+query_counter = Counter('chatbot_queries_total', 'Total number of queries')
+
+# Track response times
+response_time = Histogram('chatbot_response_seconds', 'Response time in seconds')
+
+@app.post("/query")
+async def query_endpoint(request: QueryRequest):
+    query_counter.inc()
+    with response_time.time():
+        response = chatbot.query(request.question)
+    return response
+```
+
+## 🐛 Troubleshooting
+
+### Ollama Not Responding
+
+```bash
+# Check Ollama status
+ollama list
+
+# Check if service is running
+ps aux | grep ollama
+
+# Restart Ollama
+pkill ollama
+ollama serve
+
+# Pull model again if needed
+ollama pull llama2
+```
+
+### Out of Memory Errors
+
+```bash
+# Switch to smaller model
+ollama pull llama2:7b
+
+# Reduce chunk size
+# In your code:
+Settings.node_parser = SentenceSplitter(chunk_size=256)
+
+# Reduce number of retrieved chunks
+query_engine = index.as_query_engine(similarity_top_k=3)
+```
+
+### Slow Response Times
+
+```bash
+# Enable GPU acceleration
+export OLLAMA_GPU=1
+
+# Use smaller model
+chatbot = IFixitRAGChatbot(model_name="llama2:7b")
+
+# Reduce retrieval size
+query_engine = index.as_query_engine(similarity_top_k=3)
+
+# Enable response caching (see Performance Optimization section)
+```
+
+### Connection Errors
+
+```bash
+# Check if API server is running
+curl http://localhost:8000/health
+
+# Check Docker containers
+docker-compose ps
+
+# View container logs
+docker-compose logs chatbot_api
+
+# Restart services
+docker-compose restart
+```
+
+## 📁 Project Structure
+
+```
+rag-irepair/
+├── api_server.py              # FastAPI server implementation
+├── ifixit_chatbot.py          # Core chatbot logic
+├── test_chatbot.py            # Integration tests
+├── testing_suite.py           # API endpoint tests
+├── requirements.txt           # Python dependencies
+├── Dockerfile                 # Docker image configuration
+├── docker-compose.yml         # Multi-container setup
+├── .env.example              # Environment variables template
+├── .gitignore                # Git ignore rules
+├── README.md                 # This file
+├── tests/
+│   ├── test_unit.py          # Unit tests
+│   └── test_performance.py   # Performance tests
+└── docs/
+    └── API.md                # Detailed API documentation
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
