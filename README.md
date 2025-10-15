@@ -2,11 +2,7 @@
 
 A production-ready RAG (Retrieval-Augmented Generation) chatbot system that provides intelligent repair guidance using iFixit's comprehensive repair database.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](https://www.docker.com/)
-
-## 🚀 Overview
+## Overview
 
 This intelligent chatbot combines the power of modern AI with iFixit's extensive repair knowledge base to provide accurate, context-aware repair assistance. Built with:
 
@@ -17,18 +13,18 @@ This intelligent chatbot combines the power of modern AI with iFixit's extensive
 - **Ollama** - Local LLM deployment
 - **Docker** - Containerized deployment
 
-## ✨ Features
+## Features
 
-- ✅ **Real-time Repair Guidance** - Instant access to iFixit's repair database
-- ✅ **Conversational AI** - Natural dialogue with context memory
-- ✅ **Multi-device Support** - Works with various device types
-- ✅ **Session Management** - Maintains conversation history
-- ✅ **REST API** - Easy integration with existing systems
-- ✅ **Source Attribution** - Transparent references to repair guides
-- ✅ **Docker Ready** - Containerized for easy deployment
-- ✅ **Scalable Architecture** - Production-grade design
+- Real-time repair guidance with access to iFixit's repair database
+- Conversational AI with context memory
+- Multi-device support
+- Session management and conversation history
+- REST API for easy integration
+- Source attribution for transparency
+- Docker-ready containerized deployment
+- Scalable production-grade architecture
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────┐
@@ -55,12 +51,12 @@ This intelligent chatbot combines the power of modern AI with iFixit's extensive
 └─────────────────┘
 ```
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
 - Python 3.9+
-- Docker & Docker Compose (optional, for containerized deployment)
+- Docker and Docker Compose (optional, for containerized deployment)
 - 8GB+ RAM recommended
 - GPU recommended (NVIDIA with CUDA support for optimal performance)
 
@@ -105,7 +101,7 @@ docker-compose up -d
 docker-compose logs -f chatbot_api
 ```
 
-## 🎯 Quick Start
+## Quick Start
 
 ### Using Python Script
 
@@ -162,11 +158,11 @@ curl -X POST "http://localhost:8000/chat" \
   }'
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 ### Health Check
 
-**Check API status:**
+Check API status:
 ```http
 GET /health
 GET /healthz  # Kubernetes/Docker health check
@@ -174,7 +170,7 @@ GET /healthz  # Kubernetes/Docker health check
 
 ### Initialization
 
-**Initialize chatbot with device-specific knowledge:**
+Initialize chatbot with device-specific knowledge:
 ```http
 POST /initialize
 
@@ -188,7 +184,7 @@ Request Body:
 
 ### Query (Stateless)
 
-**Ask a single question without maintaining context:**
+Ask a single question without maintaining context:
 ```http
 POST /query
 
@@ -201,7 +197,7 @@ Request Body:
 
 ### Chat (Stateful)
 
-**Engage in conversation with context memory:**
+Engage in conversation with context memory:
 ```http
 POST /chat
 
@@ -214,24 +210,24 @@ Request Body:
 
 ### Session Management
 
-**Get conversation history:**
+Get conversation history:
 ```http
 GET /sessions/{session_id}
 ```
 
-**Delete session:**
+Delete session:
 ```http
 DELETE /sessions/{session_id}
 ```
 
 ### Reset
 
-**Reset chatbot state:**
+Reset chatbot state:
 ```http
 POST /reset
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -285,7 +281,7 @@ query_engine = index.as_query_engine(
 )
 ```
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Single Container
 
@@ -317,7 +313,7 @@ docker-compose down
 docker-compose restart chatbot_api
 ```
 
-## ☁️ Cloud Deployment
+## Cloud Deployment
 
 ### AWS EC2
 
@@ -369,7 +365,7 @@ az container create \
   --environment-variables IFIXIT_API_KEY=your_key
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run unit tests
@@ -385,7 +381,7 @@ python -m pytest tests/test_performance.py
 python testing_suite.py
 ```
 
-## 📊 Performance Optimization
+## Performance Optimization
 
 ### 1. Model Selection
 
@@ -430,47 +426,47 @@ docker-compose --profile gpu up -d
 docker exec chatbot_api nvidia-smi
 ```
 
-## 🔒 Security Best Practices
+## Security Best Practices
 
-1. **API Key Management**
-   - Store API keys in environment variables or secret managers
-   - Never commit keys to version control
-   - Use `.env` files (listed in `.gitignore`)
+### 1. API Key Management
+- Store API keys in environment variables or secret managers
+- Never commit keys to version control
+- Use `.env` files (listed in `.gitignore`)
 
-2. **Rate Limiting**
-   ```python
-   from slowapi import Limiter
-   limiter = Limiter(key_func=get_remote_address)
-   
-   @app.post("/query")
-   @limiter.limit("10/minute")
-   async def query_endpoint():
-       pass
-   ```
+### 2. Rate Limiting
+```python
+from slowapi import Limiter
+limiter = Limiter(key_func=get_remote_address)
 
-3. **Input Validation**
-   - Sanitize all user inputs
-   - Implement request size limits
-   - Validate data types and formats
+@app.post("/query")
+@limiter.limit("10/minute")
+async def query_endpoint():
+    pass
+```
 
-4. **HTTPS**
-   - Always use SSL/TLS in production
-   - Configure reverse proxy (nginx, Caddy)
-   - Use Let's Encrypt for free certificates
+### 3. Input Validation
+- Sanitize all user inputs
+- Implement request size limits
+- Validate data types and formats
 
-5. **CORS Configuration**
-   ```python
-   from fastapi.middleware.cors import CORSMiddleware
-   
-   app.add_middleware(
-       CORSMiddleware,
-       allow_origins=["https://yourdomain.com"],
-       allow_methods=["POST", "GET"],
-       allow_headers=["*"],
-   )
-   ```
+### 4. HTTPS
+- Always use SSL/TLS in production
+- Configure reverse proxy (nginx, Caddy)
+- Use Let's Encrypt for free certificates
 
-## 📈 Monitoring & Logging
+### 5. CORS Configuration
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://yourdomain.com"],
+    allow_methods=["POST", "GET"],
+    allow_headers=["*"],
+)
+```
+
+## Monitoring and Logging
 
 ### Logging Configuration
 
@@ -508,7 +504,7 @@ async def query_endpoint(request: QueryRequest):
     return response
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Ollama Not Responding
 
@@ -572,7 +568,7 @@ docker-compose logs chatbot_api
 docker-compose restart
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 rag-irepair/
@@ -593,8 +589,7 @@ rag-irepair/
     └── API.md                # Detailed API documentation
 ```
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 
